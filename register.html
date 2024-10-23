@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Hospital Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .register-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1, p {
+            text-align: center;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .register-form label {
+            margin-bottom: 5px;
+        }
+
+        .register-form input, .register-form select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .register-form button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .register-form button:hover {
+            background-color: #218838;
+        }
+
+        .back-btn {
+            background-color: #007bff;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <h1>Register</h1>
+        <p>Create a new account as a Doctor or Patient</p>
+
+        <form class="register-form" id="registerForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+            <div class="error" id="nameError"></div>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <div class="error" id="emailError"></div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <div class="error" id="passwordError"></div>
+
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="">Select Role</option>
+                <option value="doctor">Doctor</option>
+                <option value="patient">Patient</option>
+            </select>
+            <div class="error" id="roleError"></div>
+
+            <label for="specialization" id="specializationLabel" style="display: none;">Specialization (for Doctors):</label>
+            <input type="text" id="specialization" name="specialization" style="display: none;">
+            <div class="error" id="specializationError"></div>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <button class="back-btn" onclick="window.location.href='loginpage.html'">Back to Login</button>
+    </div>
+
+    <script>
+        // Handle role-based display for specialization field
+        document.getElementById('role').addEventListener('change', function() {
+            const role = this.value;
+            const specializationLabel = document.getElementById('specializationLabel');
+            const specializationInput = document.getElementById('specialization');
+
+            if (role === 'doctor') {
+                specializationLabel.style.display = 'block';
+                specializationInput.style.display = 'block';
+                specializationInput.required = true;
+            } else {
+                specializationLabel.style.display = 'none';
+                specializationInput.style.display = 'none';
+                specializationInput.required = false;
+            }
+        });
+
+        // Handle form submission and save the user to localStorage
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent the form from submitting
+
+            // Clear previous error messages
+            document.getElementById('nameError').innerText = '';
+            document.getElementById('emailError').innerText = '';
+            document.getElementById('passwordError').innerText = '';
+            document.getElementById('roleError').innerText = '';
+            document.getElementById('specializationError').innerText = '';
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const specialization = document.getElementById('specialization').value;
+
+            // Validation
+            let isValid = true;
+
+            // Name validation
+            if (!/^[a-zA-Z\s]+$/.test(name)) {
+                document.getElementById('nameError').innerText = 'Please enter a valid name.';
+                isValid = false;
+            }
+
+            // Email validation
+            if (!/\S+@\S+\.\S+/.test(email)) {
+                document.getElementById('emailError').innerText = 'Please enter a valid email.';
+                isValid = false;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                document.getElementById('passwordError').innerText = 'Password must be at least 6 characters.';
+                isValid = false;
+            }
+
+            // Role validation
+            if (role === '') {
+                document.getElementById('roleError').innerText = 'Please select a role.';
+                isValid = false;
+            }
+
+            // Specialization validation
+            if (role === 'doctor' && specialization.trim() === '') {
+                document.getElementById('specializationError').innerText = 'Specialization is required for doctors.';
+                isValid = false;
+            }
+
+            // If valid, store user data
+            if (isValid) {
+                const user = {
+                    name: name,
+                    email: email,
+                    password: password,
+                    role: role,
+                    specialization: specialization
+                };
+
+                // Store the user in localStorage
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+                users.push(user);
+                localStorage.setItem('users', JSON.stringify(users));
+
+                window.location.href = 'loginpage.html';
+            }
+        });
+    </script>
+
+</body>
+</html>

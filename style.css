@@ -1,0 +1,62 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background: url('0.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+.nav-item a,.navbar-brand{
+    color: white;
+}
+.hover:hover{
+    box-shadow: 0px 1px 7px rgba(0,0,0,0.6);
+}
+.user-icon{
+    font-size:2rem;
+    width: fit-content;
+    border-radius: 50%;
+    padding: 20px 25px;
+    box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+}
+/* Common Media Queries */
+
+/* Tablets and small desktops (min-width: 768px) */
+@media (min-width: 768px) {
+    .container {
+        width: 100%;
+    }
+    
+    .sidebar {
+        width: 200px;
+        position: relative;
+        height: auto;
+        margin-bottom: 20px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Mobile devices (max-width: 576px) */
+@media (max-width: 576px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        font-size: 1.5rem;
+    }
+    
+    .sidebar {
+        width: 100%;
+        position: relative;
+        padding: 10px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 10px;
+    }
+}
