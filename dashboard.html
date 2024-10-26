@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -203,6 +204,10 @@
                 </div>
             </div>
         </div>
+        <div class="container my-4">
+            <canvas id="dataChart" width="400" height="200"></canvas>
+            <canvas id="lineChart"></canvas>
+        </div>
     </div>
 
     <div class="date-time" id="dateTimeDisplay"></div>
@@ -255,6 +260,77 @@
 
         setInterval(updateDateTime, 1000); // Update every second
         updateDateTime(); // Initial call
+        async function fetchData() {
+            try {
+                const [patientsRes, doctorsRes] = await Promise.all([
+                    fetch("https://doc-back.onrender.com/patients"),
+                    fetch("https://doc-back.onrender.com/doctors")
+                ]);
+
+                const patientsData = await patientsRes.json();
+                const doctorsData = await doctorsRes.json();
+
+                // Create a mapping for appointment dates to counts
+                const patientCounts = {};
+                const doctorCounts = {};
+
+                patientsData.forEach(patient => {
+                    const month = new Date(patient.appointmentDate).getMonth(); // 0-11 for Jan-Dec
+                    patientCounts[month] = (patientCounts[month] || 0) + 1;
+                });
+
+                doctorsData.forEach(doctor => {
+                    const month = new Date(doctor.schedule?.date).getMonth(); // 0-11 for Jan-Dec
+                    doctorCounts[month] = (doctorCounts[month] || 0) + 1;
+                });
+
+                // Prepare data for the chart
+                const months = Array.from({ length: 12 }, (_, i) => `Month ${i + 1}`);
+                const patientData = months.map((_, i) => patientCounts[i] || 0);
+                const doctorData = months.map((_, i) => doctorCounts[i] || 0);
+
+                // Create the chart
+                const ctx = document.getElementById("lineChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: "Number of Patients",
+                                data: patientData,
+                                borderColor: "rgba(75, 192, 192, 1)",
+                                fill: false,
+                                tension: 0.1,
+                            },
+                            {
+                                label: "Number of Doctors",
+                                data: doctorData,
+                                borderColor: "rgba(255, 99, 132, 1)",
+                                fill: false,
+                                tension: 0.1,
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Months' },
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Count' },
+                            },
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Load chart on page load
+        window.onload = fetchData;
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
