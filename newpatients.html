@@ -52,11 +52,22 @@
           <label for="age">Age</label>
           <input type="text" class="form-control mt-2" id="age" placeholder="Enter Age" required>
         </div>
-        <div class="form-group">
-          <label for="gender">Gender</label>
-          <input type="text" class="form-control mt-2" id="gender" aria-describedby="emailHelp"
-            placeholder="Enter Gender" required>
-        </div><br>
+        <div class="form-group mb-3">
+  <label>Gender</label><br>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="gender" id="genderMale" value="Male" required>
+    <label class="form-check-label" for="genderMale">Male</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="Female">
+    <label class="form-check-label" for="genderFemale">Female</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="gender" id="genderOther" value="Other">
+    <label class="form-check-label" for="genderOther">Other</label>
+  </div>
+</div>
+<br>
         <div class="form-group mb-3">
           <label for="appointment">Appointment Date </label>
           <input type="date" class="form-control mt-2" id="appointment" required>

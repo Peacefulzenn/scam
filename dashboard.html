@@ -5,82 +5,105 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hospital Management Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="dashboards.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .welcome-box {
+            background-image: url(bg2.jpg); /* Replace with your background image URL */
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="sidebar">
-        <div class="profile">
-            <img src="user.png" alt="Administrator">
-            <h2 id="userName"></h2>
-            <p id="userEmail"></p>
+<body class="bg-gray-100">
+    <div class="flex">
+        <div class="sidebar w-64 bg-gray-800 text-white min-h-screen p-4">
+            <div class="profile text-center mb-6">
+                <img src="user.png" alt="Administrator" class="rounded-full w-24 h-24 mb-2">
+                <h2 id="userName" class="text-lg font-semibold"></h2>
+                <p id="userEmail" class="text-gray-400"></p>
+            </div>
+            <button class="logout-btn bg-red-600 hover:bg-red-500 text-white w-full p-2 rounded mb-4" onclick="logout()">Log out</button>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="doctors.html" class="flex items-center py-2 px-3 rounded hover:bg-gray-700">
+                            <i class="fas fa-user-md mr-2"></i> Doctors
+                        </a>
+                    </li>
+                    <li>
+                        <a href="schedule.html" class="flex items-center py-2 px-3 rounded hover:bg-gray-700">
+                            <i class="fas fa-calendar-alt mr-2"></i> Schedule
+                        </a>
+                    </li>
+                    <li>
+                        <a href="appointments.html" class="flex items-center py-2 px-3 rounded hover:bg-gray-700">
+                            <i class="fas fa-calendar-check mr-2"></i> Appointments
+                        </a>
+                    </li>
+                    <li>
+                        <a href="patients.html" class="flex items-center py-2 px-3 rounded hover:bg-gray-700">
+                            <i class="fas fa-user-injured mr-2"></i> Patients
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <button class="logout-btn" onclick="logout()">Log out</button>
-        <nav>
-            <ul>
-                <li><a href="doctors.html">Doctors</a></li>
-                <li><a href="schedule.html">Schedule</a></li>
-                <li><a href="appointments.html">Appointment</a></li>
-                <li><a href="patients.html">Patients</a></li>
-            </ul>
-        </nav>
-    </div>
-    <div class="content">
-        <div class="welcome-box">
-            <h4>Welcome,</h4>
-            <h4><span id="userNameDisplay"></span>!</h4>
-            <p>Haven't any idea about doctors? No problem! Jump into the "All Doctors" section or "Sessions". Track your past and future appointments history, and find out the expected arrival time of your doctor or medical consultant.</p>
-        </div>
-        <div class="count-container">
-            <!-- Doctors count -->
-            <div class="card bg-light border-primary text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Total Doctors</h5>
-                    <h3 id="doctorCount">0</h3>
+        
+        <div class="content flex-grow p-6">
+            <div class="welcome-box bg-white shadow-md rounded-lg p-4 mb-6">
+                <h4 class="text-xl font-semibold">Welcome,</h4>
+                <h4 class="text-2xl font-bold"><span id="userNameDisplay"></span>!</h4>
+                <p>Haven't any idea about doctors? No problem! Jump into the "All Doctors" section or "Sessions". Track your past and future appointments history, and find out the expected arrival time of your doctor or medical consultant.</p>
+            </div>
+            <div class="count-container flex justify-between mb-6">
+                <div class="card bg-blue-100 border-l-4 border-blue-500 rounded-lg p-4 w-1/3 text-center">
+                    <h5 class="font-semibold">Total Doctors</h5>
+                    <h3 id="doctorCount" class="text-3xl font-bold">0</h3>
+                </div>
+                <div class="card bg-green-100 border-l-4 border-green-500 rounded-lg p-4 w-1/3 text-center">
+                    <h5 class="font-semibold">Total Patients</h5>
+                    <h3 id="patientCount" class="text-3xl font-bold">0</h3>
                 </div>
             </div>
-            <!-- Patients count -->
-            <div class="card bg-light border-success text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Total Patients</h5>
-                    <h3 id="patientCount">0</h3>
-                </div>
+            <div class="container my-4">
+                
+                <canvas id="lineChart"></canvas>
             </div>
-        </div>
-        <div class="container my-4">
-            <canvas id="dataChart" width="400" height="200"></canvas>
-            <canvas id="lineChart"></canvas>
         </div>
     </div>
 
-    <div class="date-time" id="dateTimeDisplay"></div>
+    <div class="date-time fixed top-5 right-5 bg-white p-2 rounded shadow-md" id="dateTimeDisplay"></div>
 
-    <div class="footer">
+    <div class="footer bg-blue-200 text-white text-center  p-4">
         <p>About: This application helps manage hospital operations efficiently.</p>
-       Admin Email :<a href=""> admin@gmail.com</a> <!-- Replace with the actual admin email -->
+        Admin Email :<a href="mailto:admin@gmail.com" class="underline"> admin@gmail.com</a> <!-- Replace with the actual admin email -->
         <p>&copy; 2024 Hospital Management System. All Rights Reserved.</p>
     </div>
 
     <script>
         function logout() {
-            localStorage.removeItem('loggedInUser');
-            // Redirect to login page
-            window.location.href = "loginpage.html";
+            fetch('logout.php') // Create a logout PHP file to handle session destruction
+                .then(() => {
+                    window.location.href = "loginpage.html"; // Redirect to login
+                });
         }
 
-        // Fetch user data from localStorage and display in the sidebar and welcome message
-        document.addEventListener('DOMContentLoaded', function () {
-            const user = JSON.parse(localStorage.getItem('loggedInUser'));
-            if (user) {
-                document.getElementById('userName').textContent = user.name;
-                document.getElementById('userEmail').textContent = user.email;
-                document.getElementById('userNameDisplay').textContent = user.name; // Display in center
-            }
+        document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        const response = await fetch("get_user.php");
+        const user = await response.json();
+        if (user.name) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userNameDisplay').textContent = user.name;
+        } else {
+            console.error("Error fetching user data:", user.error);
+        }
 
-            // Fetch Doctors and Patients data from API
+
             fetch("https://doc-back.onrender.com/doctors")
                 .then(res => res.json())
                 .then(doctors => {
@@ -88,23 +111,26 @@
                     document.getElementById("doctorCount").innerText = doctorCount;
                 });
 
-            fetch("https://doc-back.onrender.com/patients")
-                .then(res => res.json())
-                .then(patients => {
-                    const patientCount = patients.length;
-                    document.getElementById("patientCount").innerText = patientCount;
-                });
+                fetch("https://doc-back.onrender.com/patients")
+                    .then(res => res.json())
+                    .then(patients => {
+                        const patientCount = patients.length;
+                        document.getElementById("patientCount").innerText = patientCount;
+                    });
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
         });
 
-        // Function to update date and time every second
         function updateDateTime() {
             const now = new Date();
             const dateTimeString = now.toLocaleString();
             document.getElementById('dateTimeDisplay').textContent = dateTimeString;
         }
 
-        setInterval(updateDateTime, 1000); // Update every second
-        updateDateTime(); // Initial call
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
         async function fetchData() {
             try {
                 const [patientsRes, doctorsRes] = await Promise.all([
@@ -115,26 +141,23 @@
                 const patientsData = await patientsRes.json();
                 const doctorsData = await doctorsRes.json();
 
-                // Create a mapping for appointment dates to counts
                 const patientCounts = {};
                 const doctorCounts = {};
 
                 patientsData.forEach(patient => {
-                    const month = new Date(patient.appointmentDate).getMonth(); // 0-11 for Jan-Dec
+                    const month = new Date(patient.appointmentDate).getMonth();
                     patientCounts[month] = (patientCounts[month] || 0) + 1;
                 });
 
                 doctorsData.forEach(doctor => {
-                    const month = new Date(doctor.schedule?.date).getMonth(); // 0-11 for Jan-Dec
+                    const month = new Date(doctor.schedule?.date).getMonth();
                     doctorCounts[month] = (doctorCounts[month] || 0) + 1;
                 });
 
-                // Prepare data for the chart
                 const months = Array.from({ length: 12 }, (_, i) => `Month ${i + 1}`);
                 const patientData = months.map((_, i) => patientCounts[i] || 0);
                 const doctorData = months.map((_, i) => doctorCounts[i] || 0);
 
-                // Create the chart
                 const ctx = document.getElementById("lineChart").getContext("2d");
                 new Chart(ctx, {
                     type: "line",
@@ -174,13 +197,8 @@
             }
         }
 
-        // Load chart on page load
         window.onload = fetchData;
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"></script>
 </body>
 
 </html>

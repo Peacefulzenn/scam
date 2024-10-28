@@ -132,76 +132,92 @@
 
         // Handle form submission and send data to the server
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Prevent the form from submitting
+    e.preventDefault(); // Prevent the form from submitting
 
-        // Clear previous error messages
-        document.getElementById('nameError').innerText = '';
-        document.getElementById('emailError').innerText = '';
-        document.getElementById('passwordError').innerText = '';
-        document.getElementById('roleError').innerText = '';
-        document.getElementById('specializationError').innerText = '';
+    // Clear previous error messages
+    document.getElementById('nameError').innerText = '';
+    document.getElementById('emailError').innerText = '';
+    document.getElementById('passwordError').innerText = '';
+    document.getElementById('roleError').innerText = '';
+    document.getElementById('specializationError').innerText = '';
 
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const role = document.getElementById('role').value;
-        const specialization = document.getElementById('specialization').value;
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+    const specialization = document.getElementById('specialization').value;
 
-            // Validation
-            let isValid = true;
+    // Validation
+    let isValid = true;
 
-            // Name validation
-            if (!/^[a-zA-Z\s]+$/.test(name)) {
-                document.getElementById('nameError').innerText = 'Please enter a valid name.';
-                isValid = false;
-            }
-
-            // Email validation
-            if (!/\S+@\S+\.\S+/.test(email)) {
-                document.getElementById('emailError').innerText = 'Please enter a valid email.';
-                isValid = false;
-            }
-
-            // Password validation
-            if (password.length < 6) {
-                document.getElementById('passwordError').innerText = 'Password must be at least 6 characters.';
-                isValid = false;
-            }
-
-            // Role validation
-            if (role === '') {
-                document.getElementById('roleError').innerText = 'Please select a role.';
-                isValid = false;
-            }
-
-            // Specialization validation
-            if (role === 'doctor' && specialization.trim() === '') {
-                document.getElementById('specializationError').innerText = 'Specialization is required for doctors.';
-                isValid = false;
-            }
-               // Create user object
-        const userData = { name, email, password, role, specialization };
-
-try {
-    const response = await fetch('register.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-        alert(result.message);
-        window.location.href = 'loginpage.html'; // Redirect to login page
-    } else {
-        alert('Registration failed: ' + result.message);
+    // Name validation
+    if (!/^[a-zA-Z\s]+$/.test(name)) {
+        document.getElementById('nameError').innerText = 'Please enter a valid name.';
+        isValid = false;
     }
-} catch (error) {
-    console.error('Error:', error);
-    alert('An error occurred');
-}
+
+    // Email validation
+    if (!/\S+@\S+\.\S+/.test(email)) {
+        document.getElementById('emailError').innerText = 'Please enter a valid email.';
+        isValid = false;
+    }
+
+    // Password validation
+    if (password.length < 6) {
+        document.getElementById('passwordError').innerText = 'Password must be at least 6 characters.';
+        isValid = false;
+    }
+
+    // Role validation
+    if (role === '') {
+        document.getElementById('roleError').innerText = 'Please select a role.';
+        isValid = false;
+    }
+
+    // Specialization validation
+    if (role === 'doctor' && specialization.trim() === '') {
+        document.getElementById('specializationError').innerText = 'Specialization is required for doctors.';
+        isValid = false;
+    }
+
+    if (!isValid) return; // Stop if the form is not valid
+
+    // Disable the button to prevent multiple submissions
+    const registerButton = document.querySelector('button[type="submit"]');
+    registerButton.disabled = true; 
+
+    // Create user object
+    const userData = { name, email, password, role, specialization };
+
+    try {
+        const response = await fetch('register.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert(result.message);
+            window.location.href = 'loginpage.html'; // Redirect to login page
+        } else {
+            if (result.message.includes('Email already exists')) {
+                document.getElementById('emailError').innerText = result.message;
+            } else {
+                alert('Registration failed: ' + result.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred');
+    } finally {
+        // Re-enable the button after processing
+        registerButton.disabled = false; 
+    }
 });
+
+
     </script>
 
 </body>
