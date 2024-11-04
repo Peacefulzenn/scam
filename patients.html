@@ -13,7 +13,7 @@
 <body>
     <!--nav bar-->
     <div class="container-fluid px-0">
-        <nav class="navbar navbar-expand-lg bg-info">
+        <nav class="navbar navbar-expand-lg bg-black">
             <div class="container">
                 <a style="padding: 10px;font-size: x-large;color: aliceblue;"><b>Hospital Management</b></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -22,7 +22,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item me-3">
                             <a class="nav-link" aria-current="page" href="dashboard.html"><b>Home</b></a>
                         </li>
@@ -73,32 +73,38 @@
     </div>
 
     <script>
-        fetch("https://doc-back.onrender.com/patients")
+      fetch("https://doc-back.onrender.com/patients")
             .then((res) => res.json())
             .then((res) => {
                 console.log(res);
                 const container = document.getElementById("patientCards");
                 let patients = res;
-                patients.forEach((patient, index) => {
+                patients.forEach((patient) => {
                     let row = document.querySelector(".row");
                     const card = document.createElement("div");
-                    card.classList.add("card", "m-2", "col-lg-3", "col-md-5", "col-10");
-                    const cardBody = document.createElement("div");
-                    cardBody.classList.add("card-body");
-                    cardBody.innerHTML = `
-                        <h5 class="card-title">${patient.name}</h5>
-                        <p class="card-text">Age: ${patient.age}</p>
-                        <p class="card-text">Gender: ${patient.gender}</p>
-                        <p class="card-text">Weight: ${patient.weight} kg</p>
-                        <p class="card-text">Disease: ${patient.disease}</p>
-                        <p class="card-text">Doctor: ${patient.doctor}</p>
-                        <p class="card-text">ID: ${patient.id}</p>
-                        <p class="card-text">Appointment Date: ${patient.appointmentDate}</p>
-                        <p class="card-text">Appointment Time: ${patient.appointmentTime}</p>
-                        <button type="button" class="btn btn-primary" onclick="editPatient(${patient.id})">Edit</button>
-                        <button type="button" class="btn btn-danger ms-2" onclick="deletePatient(${patient.id})">Delete</button>
+                    card.classList.add("col-lg-3", "col-md-4", "col-10", "m-2");
+
+                    // Create the card structure
+                    card.innerHTML = `
+                        <div class="card">
+    <div class="patient-name">${patient.name}</div> <!-- Name displayed on the front -->
+    <div class="cover">
+        <div class="details">
+            <p>Age: ${patient.age}</p>
+            <p>Gender: ${patient.gender}</p>
+            <p>Weight: ${patient.weight} kg</p>
+            <p>Disease: ${patient.disease}</p>
+            <p>Doctor: ${patient.doctor}</p>
+            <p>ID: ${patient.id}</p>
+            <p>Appointment Date: ${patient.appointmentDate}</p>
+            <p>Appointment Time: ${patient.appointmentTime}</p>
+            <button type="button" class="btn btn-primary" onclick="editPatient(${patient.id})">Edit</button>
+            <button type="button" class="btn btn-danger ms-2" onclick="deletePatient(${patient.id})">Delete</button>
+        </div>
+    </div>
+</div>
+
                     `;
-                    card.appendChild(cardBody);
                     row.appendChild(card);
                 });
             })

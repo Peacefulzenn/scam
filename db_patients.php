@@ -1,50 +1,48 @@
 <?php
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Database connection
+$servername = "localhost";
+$username = "root"; // Your database username
+$password = "varun03"; // Your database password
+$dbname = "hospital_db";
 
-// Database connection parameters
-$host = "localhost"; 
-$dbname = "hospital_db"; 
-$username = "root"; 
-$password = "varun03"; 
-
-$conn = new mysqli($host, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die(json_encode(['success' => false, 'message' => 'Database connection failed.']));
 }
 
-// Get the JSON data from the request
-$data = json_decode(file_get_contents("php://input"), true);
+// Get data from the request
+$data = json_decode(file_get_contents("php://input"));
 
-// Validate the data (basic example)
-if (!isset($data['name'], $data['age'], $data['gender'], $data['disease'], $data['weight'], $data['doctor'], $data['appointmentDate'], $data['appointmentTime'])) {
-    echo json_encode(["status" => "error", "message" => "Invalid input data."]);
-    exit;
-}
+// Extract the variables from the data
+$name = $conn->real_escape_string($data->name);
+$age = $conn->real_escape_string($data->age);
+$gender = $conn->real_escape_string($data->gender);
+$disease = $conn->real_escape_string($data->disease);
+$weight = $conn->real_escape_string($data->weight);
+$doctor = $conn->real_escape_string($data->doctor);
+$appointmentDate = $conn->real_escape_string($data->appointmentDate);
+$appointmentTime = $conn->real_escape_string($data->appointmentTime);
 
-// Prepare and bind
-$stmt = $conn->prepare("INSERT INTO patients (name, age, gender, disease, weight, doctor, appointmentDate, appointmentTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-if ($stmt === false) {
-    die("Prepare failed: " . $conn->error);
-}
+// Insert the patient data into the database
+$sql = "INSERT INTO patients (name, age, gender, disease, weight, doctor, appointmentDate, appointmentTime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($sql);
 
-$stmt->bind_param("sissssss", $data['name'], $data['age'], $data['gender'], $data['disease'], $data['weight'], $data['doctor'], $data['appointmentDate'], $data['appointmentTime']);
-
-// Execute the statement
-if ($stmt->execute()) {
-    echo json_encode(["status" => "success", "message" => "Patient added successfully."]);
+if ($stmt) {
+    $stmt->bind_param("sissssss", $name, $age, $gender, $disease, $weight, $doctor, $appointmentDate, $appointmentTime);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Patient added successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $stmt->error]);
+    }
+    
+    $stmt->close();
 } else {
-    error_log("Database Error: " . $stmt->error);
-    echo json_encode(["status" => "error", "message" => "Error: " . $stmt->error]);
+    echo json_encode(['success' => false, 'message' => 'Error preparing the statement: ' . $conn->error]);
 }
 
-// Log incoming data
-error_log(print_r($data, true));
-
-// Close connections
-$stmt->close();
 $conn->close();
 ?>

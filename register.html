@@ -4,221 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Hospital Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .register-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-
-        h1, p {
-            text-align: center;
-        }
-
-        .register-form {
-            display: flex;
-            flex-direction: column;
-            margin-top: 20px;
-        }
-
-        .register-form label {
-            margin-bottom: 5px;
-        }
-
-        .register-form input, .register-form select {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .register-form button {
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .register-form button:hover {
-            background-color: #218838;
-        }
-
-        .back-btn {
-            background-color: #007bff;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .back-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .error {
-            color: red;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="register.css">
 </head>
 <body>
 
-    <div class="register-container">
-        <h1>Register</h1>
-        <p>Create a new account as a Doctor or Patient</p>
+<div class="register-container">
+    <h1>Register</h1>
+    <p></p>
 
-        <form class="register-form" id="registerForm">
-            <label for="name">Full Name:</label>
-            <input type="text" id="name" name="name" required>
+    <form class="form" id="registerForm">
+        <p class="title">Register</p>
+        <p class="message">Create a new account as a Doctor or Patient</p>
+
+        <div class="flex">
+            <label>
+                <input class="input" type="text" id="name" required>
+                <span>Full Name</span>
+            </label>
             <div class="error" id="nameError"></div>
+        </div>
+        <br>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <div class="error" id="emailError"></div>
+        <label>
+            <input class="input" type="email" id="email" required>
+            <span>Email</span>
+        </label>
+        <div class="error" id="emailError"></div>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <div class="error" id="passwordError"></div>
+        <label>
+            <input class="input" type="password" id="password" required>
+            <span>Password</span>
+        </label>
+        <div class="error" id="passwordError"></div>
 
-            <label for="role">Role:</label>
-            <select id="role" name="role" required>
+        <label>
+            <select class="input" id="role" required>
                 <option value="">Select Role</option>
                 <option value="doctor">Doctor</option>
                 <option value="patient">Patient</option>
             </select>
-            <div class="error" id="roleError"></div>
+            <span>Role</span>
+        </label>
+        <div class="error" id="roleError"></div>
 
-            <label for="specialization" id="specializationLabel" style="display: none;">Specialization (for Doctors):</label>
-            <input type="text" id="specialization" name="specialization" style="display: none;">
-            <div class="error" id="specializationError"></div>
+        <label id="specializationLabel" style="display: none;">
+            <input class="input" type="text" id="specialization" >
+            <span>Specialization</span>
+        </label>
+        <div class="error" id="specializationError"></div>
 
-            <button type="submit">Register</button>
-        </form>
+        <button type="submit" class="submit">Submit</button>
+        <p class="signin">Already have an account? <a href="loginpage.html">Signin</a></p>
+    </form>
+</div>
 
-        <button class="back-btn" onclick="window.location.href='loginpage.html'">Back to Login</button>
-    </div>
+<script>
+    // Toggle specialization field based on role selection
+    document.getElementById('role').addEventListener('change', function() {
+        const role = this.value;
+        const specializationLabel = document.getElementById('specializationLabel');
+        const specializationInput = document.getElementById('specialization');
 
-    <script>
-        // Handle role-based display for specialization field
-        document.getElementById('role').addEventListener('change', function() {
-            const role = this.value;
-            const specializationLabel = document.getElementById('specializationLabel');
-            const specializationInput = document.getElementById('specialization');
-
-            if (role === 'doctor') {
-                specializationLabel.style.display = 'block';
-                specializationInput.style.display = 'block';
-                specializationInput.required = true;
-            } else {
-                specializationLabel.style.display = 'none';
-                specializationInput.style.display = 'none';
-                specializationInput.required = false;
-            }
-        });
-
-        // Handle form submission and send data to the server
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault(); // Prevent the form from submitting
-
-    // Clear previous error messages
-    document.getElementById('nameError').innerText = '';
-    document.getElementById('emailError').innerText = '';
-    document.getElementById('passwordError').innerText = '';
-    document.getElementById('roleError').innerText = '';
-    document.getElementById('specializationError').innerText = '';
-
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
-    const specialization = document.getElementById('specialization').value;
-
-    // Validation
-    let isValid = true;
-
-    // Name validation
-    if (!/^[a-zA-Z\s]+$/.test(name)) {
-        document.getElementById('nameError').innerText = 'Please enter a valid name.';
-        isValid = false;
-    }
-
-    // Email validation
-    if (!/\S+@\S+\.\S+/.test(email)) {
-        document.getElementById('emailError').innerText = 'Please enter a valid email.';
-        isValid = false;
-    }
-
-    // Password validation
-    if (password.length < 6) {
-        document.getElementById('passwordError').innerText = 'Password must be at least 6 characters.';
-        isValid = false;
-    }
-
-    // Role validation
-    if (role === '') {
-        document.getElementById('roleError').innerText = 'Please select a role.';
-        isValid = false;
-    }
-
-    // Specialization validation
-    if (role === 'doctor' && specialization.trim() === '') {
-        document.getElementById('specializationError').innerText = 'Specialization is required for doctors.';
-        isValid = false;
-    }
-
-    if (!isValid) return; // Stop if the form is not valid
-
-    // Disable the button to prevent multiple submissions
-    const registerButton = document.querySelector('button[type="submit"]');
-    registerButton.disabled = true; 
-
-    // Create user object
-    const userData = { name, email, password, role, specialization };
-
-    try {
-        const response = await fetch('register.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData),
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert(result.message);
-            window.location.href = 'loginpage.html'; // Redirect to login page
+        if (role === 'doctor') {
+            specializationLabel.style.display = 'block';
+            specializationInput.required = true;
         } else {
-            if (result.message.includes('Email already exists')) {
-                document.getElementById('emailError').innerText = result.message;
-            } else {
-                alert('Registration failed: ' + result.message);
-            }
+            specializationLabel.style.display = 'none';
+            specializationInput.required = false;
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred');
-    } finally {
-        // Re-enable the button after processing
-        registerButton.disabled = false; 
-    }
-});
+    });
 
+    // Handle form submission and send data to the server
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    </script>
+        // Clear previous error messages
+        document.getElementById('nameError').innerText = '';
+        document.getElementById('emailError').innerText = '';
+        document.getElementById('passwordError').innerText = '';
+        document.getElementById('roleError').innerText = '';
+        document.getElementById('specializationError').innerText = '';
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const role = document.getElementById('role').value;
+        const specialization = document.getElementById('specialization').value;
+
+        let isValid = true;
+
+        // Basic validation
+        if (!/^[a-zA-Z\s]+$/.test(name)) {
+            document.getElementById('nameError').innerText = 'Please enter a valid name.';
+            isValid = false;
+        }
+        if (!/\S+@\S+\.\S+/.test(email)) {
+            document.getElementById('emailError').innerText = 'Please enter a valid email.';
+            isValid = false;
+        }
+        if (password.length < 6) {
+            document.getElementById('passwordError').innerText = 'Password must be at least 6 characters.';
+            isValid = false;
+        }
+        if (!role) {
+            document.getElementById('roleError').innerText = 'Please select a role.';
+            isValid = false;
+        }
+        if (role === 'doctor' && specialization.trim() === '') {
+            document.getElementById('specializationError').innerText = 'Specialization is required for doctors.';
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // Disable button to prevent multiple submissions
+        const registerButton = document.querySelector('button[type="submit"]');
+        registerButton.disabled = true;
+
+        const userData = { name, email, password, role, specialization };
+
+        try {
+            const response = await fetch('register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(result.message);
+                window.location.href = 'loginpage.html';
+            } else {
+                document.getElementById('emailError').innerText = result.message.includes('Email already exists')
+                    ? result.message
+                    : 'Registration failed: ' + result.message;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred during registration.');
+        } finally {
+            registerButton.disabled = false;
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -15,7 +15,7 @@
 <body >
     <!--nav bar-->
     <div class="container-fluid px-0">
-        <nav class="navbar navbar-expand-lg bg-info">
+        <nav class="navbar navbar-expand-lg bg-black">
             <div class="container">
                 <a style="font-size: x-large;color: aliceblue;padding: 10px;"><b>Hospital Management</b></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -24,14 +24,13 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item me-3">
                             <a class="nav-link" aria-current="page" href="dashboard.html"><b>Home</b></a>
                         </li>
                         <li class="nav-item me-3">
                             <a class="nav-link" aria-current="page" href="newdoctor.html"><b>Add Doctors</b></a>
                         </li>
-                        
                     </ul>
                 </div>
             </div>
@@ -39,11 +38,12 @@
     </div>
     
     <!--main part-->
-    <div class="container mt-5" id="doctorCards">
+    <div id="doctorCards" class="container mt-5">
         <div class="row">
             <!-- Doctor cards will be appended here -->
         </div>
     </div>
+    
 
     <!--modal logic here-->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -79,38 +79,47 @@
                     <button type="button" class="btn btn-primary" id="saveChangesBtn" onclick="saveChanges()">Save
                         changes</button>
                 </div>
+                </div>
+                
             </div>
         </div>
     </div>
 
     <script>
-        fetch("https://doc-back.onrender.com/doctors")
-            .then((res) => res.json())
-            .then((res) => {
-                console.log(res);
-                const container = document.getElementById("doctorCards");
-                let doctors = res;
-                doctors.forEach((doctor, index) => {
-                    let row = document.querySelector(".row");
-                    const card = document.createElement("div");
-                    card.classList.add("card", "m-2", "col-lg-3", "col-md-5", "col-10");
-                    const cardBody = document.createElement("div");
-                    cardBody.classList.add("card-body");
-                    cardBody.innerHTML = `
-                        <h5 class="card-title">${doctor.name}</h5>
-                        <p class="card-text">Specialization: ${doctor.specialization}</p>
-                        <p class="card-text">Gender: ${doctor.gender}</p>
-                        <p class="card-text">ID: ${doctor.id}</p>
-                        <button type="button" class="btn btn-primary" onclick="editDoctor(${doctor.id})">Edit</button>
-                        <button type="button" class="btn btn-danger ms-2" onclick="deleteDoctor(${doctor.id})">Delete</button>
-                    `;
-                    card.appendChild(cardBody);
-                    row.appendChild(card);
-                });
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
+       fetch("https://doc-back.onrender.com/doctors")
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then((doctors) => {
+            const container = document.getElementById("doctorCards");
+            let row = container.querySelector(".row");
+
+            doctors.forEach((doctor) => {
+                const card = document.createElement("div");
+                card.classList.add("card", "m-2", "col-lg-3", "col-md-5", "col-10");
+
+                card.innerHTML = `
+                    <div class="patient-name">${doctor.name}</div> <!-- Name displayed on the front -->
+                    <div class="cover">
+                        <div class="details">
+                            <p>Specialization: ${doctor.specialization}</p>
+                            <p>Gender: ${doctor.gender}</p>
+                            <p>ID: ${doctor.id}</p>
+                            <button type="button" class="btn btn-primary" onclick="editDoctor(${doctor.id})">Edit</button>
+                            <button type="button" class="btn btn-danger ms-2" onclick="deleteDoctor(${doctor.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+                row.appendChild(card);
             });
+        })
+        .catch((error) => {
+            console.error("Error fetching data:", error);
+        })
+
 
         function editDoctor(doctorId) {
             const editModal = new bootstrap.Modal(document.getElementById('editModal'));
